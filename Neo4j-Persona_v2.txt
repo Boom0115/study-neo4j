@@ -1,0 +1,380 @@
+// ノード登録
+MERGE (atlas:Company {
+	name:"アトラス"
+	, full_name:"株式会社アトラス"
+	,	business:"コンソールゲーム等の企画・開発"
+	,	address:"東京都世田谷区三軒茶屋2-11-22サンタワーズセンタービル"
+})
+MERGE (sega:Company {
+	name:"セガ"
+	,full_name:"株式会社セガゲームス"
+	,business:"コンシューマーゲームの開発・販売"
+	,address:"東京都大田区羽田1丁目2番12号"
+})
+MERGE (sega)-[:子会社]->(atlas)
+MERGE (sega)<-[:親会社]-(atlas)
+MERGE (sce:Company {
+	name:"SCE"
+	,会社名:"株式会社ソニー・コンピュータエンタテインメント"
+	,事業内容:"コンシューマーゲームの開発・製造・販売"
+	,住所:"東京都港区港南一丁目7番1号ソニーシティ"
+})
+MERGE (ps2:GameHardware { name: "PS2", full_name: "PlayStation2"})
+MERGE (ps2)<-[:販売]-(sce)
+MERGE (ps3:GameHardware { name: "PS3" , full_name: "PlayStation3" })
+MERGE (ps3)<-[:販売]-(sce)
+MERGE (ps4:GameHardware { name: "PS4", full_name:"PlayStation4" })
+MERGE (ps4)<-[:販売]-(sce)
+MERGE (psvita:GameHardware { name:"PSVita", full_name: "PlayStation Vita" })
+MERGE (psvita)<-[:販売]-(sce)
+MERGE (psp:GameHardware { name: "PSP", full_name: "PlayStation Portable" })
+MERGE (psp)<-[:販売]-(sce)
+MERGE (p4:VideoGame { 
+	title:"ペルソナ４"
+	, 発売日:"2008-07-10"
+	, ストーリー:"2011年4月。両親の海外出張で日本に残された主人公は、1年間だけ母方の叔父の家に居候することになった。彼が転入した八十神高校では、「雨の夜の午前0時に点いていないテレビで自分の顔を見つめると、別の人間が映る」という「マヨナカテレビ」の噂が流れていた。この噂は実際に起こりつつあった怪異の一端であり、マヨナカテレビの噂を確かめようとした主人公、陽介、千枝はテレビの中の異世界の存在を知ることになる。同時期に町で発生していた連続殺人事件とマヨナカテレビには関連があると睨んだ主人公たちは、異空間を探る中で「シャドウ」と呼ばれる化け物に襲われ、日常の裏にある世界の闇を垣間見ることになる。
+怪異に触れることで、自らの抑圧された感情の化身を具現化して使役する「ペルソナ能力」を発現させた彼らは、警察に話しても信じてもらえないという考えから、秘密を共有する仲間と共に、事件や異世界に隠された真実を追うべく、自称「特別捜査隊」を結成することになる。主人公は表向きはごく普通の高校生として、学業や部活やアルバイトに励み、多くの人々と交流を築く一方で、放課後には仲間と共にシャドウが徘徊する異空間で戦い、事件に巻き込まれた人々を助け、事件の解決のために奔走する。"
+})
+MERGE (atlas)-[:発売]->(p4)
+MERGE (ps2)<-[:対応機種]-(p4)
+MERGE (p3:VideoGame { 
+	title:"ペルソナ３"
+	, 発売日:"2006-07-13"
+	,	対応機種:"PlayStation2"
+	, ストーリー:"2009年4月。10年前に両親を事故で亡くし、親戚に育てられた主人公は、家庭の事情で小中高一貫校「私立月光館学園」の高等部に編入することとなった。しかし、学生寮に入寮して間もなく、彼は異形の怪物・シャドウに襲われ、秘められていたペルソナ能力を覚醒させてしまう。それがきっかけで、主人公は隠された世界の真実の一端を知らされることになる。"
+})
+MERGE (atlas)-[:発売]->(p3)
+MERGE (ps2)<-[:対応機種]-(p3)
+MERGE (series:Series { name: "ペルソナ・シリーズ"})
+MERGE (p3)<-[:シリーズ作品]-(series)
+MERGE (p4)<-[:シリーズ作品]-(series)
+MERGE (p4g:VideoGame { 
+	title:"ペルソナ4 ザ・ゴールデン"
+	, 発売日:"2012-06-14"
+})
+MERGE (p4g)<-[:シリーズ作品]-(series)
+MERGE (p4g)<-[:移植]-(p4)
+MERGE (psvita)<-[:対応機種]-(p4g)
+MERGE (p4)-[:アニメ化]->(anim_p4a:Anime{title:"Persona4 the Animation"})<-[:監督]-(kishi_seiji:Person{name:"岸誠二"})
+MERGE (p4g)-[:アニメ化]->(anim_p4ga:Anime{title:"Persona4 the Golden Animation"})<-[:監督]-(taguchi_tomohisa:Person{name:"口智久"})
+MERGE (anim_p4ga)<-[:総監督]-(kishi_seiji)
+
+MERGE (p4)-[:GROUP]->(ge:GameElement{name:"ゲーム要素"})
+MERGE (ge)-[:GROUP]->(chars:CharacterGroup{name:"キャラクター"})
+// ゲームタイトルとキャラクターは直結させる
+MERGE (p4)-[:キャラクター]->(chars)
+
+MERGE(char1:Character:ペルソナ４登場人物 {
+	name:"鳴上 悠"
+	,Character属性:"主人公"
+	,アルカナ:"愚者"
+	,固有武器:"両手剣"
+	,設定:"本作の主人公。 母方の親戚を頼り、 
+田舎町へ引っ越してきた。 
+ペルソナ使いとしての
+素質に目覚めることで 
+異世界への扉を開いてしまう。"})
+MERGE (char1)<-[:登場人物]-(chars)
+MERGE (namikawa_daisuke:Person:声優 {
+	name: "浪川大輔"
+	,sex: "男性"
+})
+MERGE (char1)<-[:声の出演]-(namikawa_daisuke)
+MERGE (p1:ペルソナ{name:"イザナギ"})
+MERGE (p1)<-[:召喚]-(char1)
+
+MERGE (char2:Character:ペルソナ４登場人物 {
+	name:"花村 陽介"
+	,Character属性:"パーティメンバー"
+	,アルカナ:"魔術師"
+	,固有武器:"二刀流"
+	,設定:"主人公と同じく八十神高校に通う
+同級生。 陽気な性格で、
+空気を読むのに長けている。
+ペルソナ使いとして覚醒するが、 
+果たしてそれに至る経緯とは・・・。"
+})
+MERGE (char2)<-[:登場人物]-(chars)
+MERGE (actor2:Person:声優 {
+	name:"森久保祥太郎"
+	,sex:"男性"
+})
+MERGE (char2)<-[:声の出演]-(actor2)
+MERGE (p2_1:ペルソナ{name:"ジライヤ"})
+MERGE (p2_2:ペルソナ{name:"スサノオ"})
+MERGE (p2_3:ペルソナ{name:"タケハヤスサノオ"})
+MERGE (char2)-[:召喚]->(p2_1)-[:進化]->(p2_2)-[:進化]->(p2_3)
+
+MERGE(char3:Character:ペルソナ４登場人物 {
+	name:"里中 千枝"
+	,Character属性:"パーティメンバー"
+	,固有武器:"履物"
+	,設定:"主人公の同級生。 稲羽市出身で、
+小学校・中学校と地元で過ごしていた
+ごく普通の少女。 
+彼女が心に抱える闇、
+ペルソナ使いとしての素質とは、一体。"
+})
+MERGE (char3)<-[:登場人物]-(chars)
+MERGE (horie_yui:Person:声優 {
+	name:"堀江由衣"
+	,sex:"女性"
+})
+MERGE (horie_yui)-[:声の出演]->(char3)
+MERGE (p3_1:ペルソナ{name:"トモエ"})
+MERGE (p3_2:ペルソナ{name:"スズカゴンゲン"})
+MERGE (p3_3:ペルソナ{name:"ハラエドノオオカミ"})
+MERGE (char3)-[:召喚]->(p3_1)-[:進化]->(p3_2)-[:進化]->(p3_3)
+
+MERGE(char4:Character:ペルソナ４登場人物 {
+	name:"天城 雪子"
+	,Character属性:"パーティメンバー"
+	,アルカナ:"女教皇"
+	,固有武器:"扇"
+	,設定:"雪子は、老舗旅館の女将の娘として
+忙しい日々を送っている。
+彼女もペルソナ使いとして覚醒するが、
+事件とは、どう関わってくるのだろうか・・・？"
+})
+MERGE (char4)<-[:登場人物]-(chars)
+MERGE (koshimizu_ami:Person:声優 {
+	name:"小清水亜美"
+	,sex:"女性"
+})
+MERGE (koshimizu_ami)-[:声の出演]->(char4)
+MERGE (p4_1:ペルソナ{name:"コノハナサクヤ"})
+MERGE (p4_2:ペルソナ{name:"アマテラス"})
+MERGE (p4_3:ペルソナ{name:"スメオオミカミ"})
+MERGE (char4)-[:召喚]->(p4_1)-[:進化]->(p4_2)-[:進化]->(p4_3)
+
+MERGE (char5:Character:ペルソナ４登場人物 {
+	name:"巽 完二"
+	,Character属性:"パーティメンバー"
+	,アルカナ:"皇帝"
+	,固有武器:"鈍器"
+	,設定:"中学時代から札付きの不良として
+その名を轟かせている完二。
+徒党を組んで悪さをするタイプではなく、
+今時珍しい硬派な不良のようだ。
+そんな彼が抱える心の闇とは一体・・・？"
+})
+MERGE (char5)<-[:登場人物]-(chars)
+MERGE (actor5:Person:声優 {
+	name:"関智一"
+	,sex:"男性"
+})
+MERGE (actor5)-[:声の出演]->(char5)
+MERGE (p5_1:ペルソナ{name:"タケミカズチ"})
+MERGE (p5_2:ペルソナ{name:"ロクテンマオウ"})
+MERGE (p5_3:ペルソナ{name:"タケジザイテン"})
+MERGE (char5)-[:召喚]->(p5_1)-[:進化]->(p5_2)-[:進化]->(p5_3)
+
+MERGE(char6:Character:ペルソナ４登場人物 {
+	name:"久慈川 りせ"
+	,Character属性:"パーティメンバー"
+	,アルカナ:"恋愛"
+	,設定:"彗星の如くデビューを果たした
+人気絶頂の準トップアイドル。
+主人公たちは
+彼女といかなる理由で
+出会うことになるのだろうか？"
+})
+MERGE (char6)<-[:登場人物]-(chars)
+MERGE (kugimiya_rie:Person:声優 {
+	name:"釘宮理恵"
+	,sex:"女性"
+})
+MERGE (kugimiya_rie)-[:声の出演]->(char6)
+
+MERGE(char7:Character:ペルソナ４登場人物 {
+	name:"クマ"
+	,Character属性:"パーティメンバー"
+	,アルカナ:"星"
+	,固有武器:"爪"
+	,設定:""
+})
+MERGE (char7)<-[:登場人物]-(chars)
+
+MERGE(char8:Character:ペルソナ４登場人物 {
+	name:"白鐘 直斗"
+	,Character属性:"パーティメンバー"
+	,アルカナ:"運命"
+	,固有武器:"拳銃"
+	,設定:""
+})
+MERGE (char8)<-[:登場人物]-(chars)
+MERGE (actor8:Person:声優 {
+	name:"朴璐美"
+	,sex:"女性"
+})
+MERGE (actor8)-[:声の出演]->(char8)
+
+MERGE(char9:Character:ペルソナ４登場人物 {
+	name:"堂島 遼太郎"
+	,キャラクター属性:"ＮＰＣ"
+	,設定:"稲羽署に勤務する刑事。主人公の母方の叔父。姉夫婦が海外出張に行くことになったため、1年間限定で、甥である主人公を自宅に居候させる。"
+})
+MERGE (char9)<-[:登場人物]-(chars)
+
+// 八十神高校を追加
+MERGE (ge)-[:GROUP]->(map_g:MapGroup{name:"マップ"})
+MERGE (map_g)-[:MAP]->(school:場所{name:"八十神高校"})
+MERGE (school)<-[:生徒]-(char1)
+MERGE (school)<-[:生徒]-(char2)
+MERGE (school)<-[:生徒]-(char3)
+MERGE (school)<-[:生徒]-(char4)
+MERGE (school)<-[:生徒]-(char5)
+MERGE (school)<-[:生徒]-(char6)
+MERGE (school)<-[:生徒]-(char7)
+
+
+// 堂島家情報を追加
+MERGE (nanako:Character{name:"堂島 菜々子"})
+MERGE (nanako)<-[:登場人物]-(chars)
+MERGE (ryotaro:Character{name:"堂島 遼太郎"})-[:娘]->(nanako)
+MERGE (ryotaro)<-[:父]-(nanako)
+MERGE (narukami:Character{name:"鳴上 悠"})<-[:おにいちゃん]-(nanako)
+MERGE (narukami)-[:いもうと]->(nanako)
+MERGE (narukami)-[:叔父]->(ryotaro)
+MERGE (narukami)<-[:甥]-(ryotaro)
+MERGE (home:場所{name:"堂島家"})
+MERGE (home)<-[:住人]-(narukami)
+MERGE (home)<-[:住人]-(ryotaro)
+MERGE (home)<-[:住人]-(nanako)
+
+
+// 制作スタッフ登録
+MERGE (hashino:Person:クリエイター{name:"橋野桂"})
+MERGE (soejima:Person:クリエイター{name:"副島成記"})
+MERGE (meguro:Person:クリエイター{name:"目黒将司"})
+MERGE (hashino)-[:制作{担当:"プロデューサー/ディレクター"}]->(p4)
+MERGE (soejima)-[:制作{担当:"キャラクターデザイン"}]->(p4)
+MERGE (meguro)-[:制作{担当:"サウンドコンポーザー"}]->(p4)
+
+// 楽曲登録
+MERGE (p4)-[:MUSIC]->(p4_music:Category:Music{name:"音楽", title:"ペルソナ４"})
+MERGE (p4_music)-[:オープニングテーマ]->(op:Song{name:"Pursuing My True Self"})
+MERGE (p4_music)-[:エンディングテーマ]->(ed:Song{name:"Never More"})
+MERGE (nanba:Person:作詞家{name:"南場優"})
+MERGE (ryo:Person:作詞家{name:"RyoRca"})
+MERGE (komori:Person:作詞家{name:"小森成雄 "})
+MERGE (hirata:Person:歌手{name:"平田志穂子"})
+MERGE (op)<-[:作詞]-(nanba)
+MERGE (op)<-[:作詞]-(ryo)
+MERGE (op)<-[:作曲]-(meguro)
+MERGE (op)<-[:歌]-(hirata)
+MERGE (ed)<-[:作詞]-(komori)
+MERGE (ed)<-[:作曲]-(meguro)
+MERGE (ed)<-[:歌]-(hirata)
+
+// ゲーム内アセットを追加
+MERGE (char2)-[:ASSET_GROUP{name:"花村陽介キャラクター素材"}]->(ag:AssetGroup{name:"アセットグループ"})-[:ART]->(:Image:Illust{name:"デザイン原画_花村陽介", format:"pdf", source:"https://some.where.com/character/hanamura_yousuke/illust/genga.pdf"})
+MERGE (ag)-[:OBJECT]->(obj:Object3D{name:"Obj花村陽介"})
+MERGE (obj)-[:MODEL]->(model:Model:Illust{name:"Mdl花村陽介", format:"fbx", source:"https://some.where.com/character/hanamura_yousuke/model.fbx"})
+MERGE (model)-[:MOTION]->(:Motion{name:"モーション_待機", format:"fbx", source:"https://some.where.com/character/hanamura_yousuke/motion/wait.fbx"})
+MERGE (model)-[:MOTION]->(:Motion{name:"モーション_歩く", format:"fbx", source:"https://some.where.com/character/hanamura_yousuke/motion/walk.fbx"})
+MERGE (model)-[:MOTION]->(:Motion{name:"モーション_話す", format:"fbx", source:"https://some.where.com/character/hanamura_yousuke/motion/talk.fbx"})
+MERGE (ag)-[:GROUP]->(sg:SoundGroup{name:"サウンド"})
+MERGE (sg)-[:GROUP]->(seg:SoundEffectGroup{name:"SE"})
+MERGE (seg)-[:SE]->(se_hit:SoundEffect{name:"攻撃ヒット", format:"wav", source:"https://some.where.com/character/hanamura_yousuke/se/attack_hit.wav"})
+MERGE (sg)-[:GROUP]->(vog:VoiceGroup{name:"ボイス"})
+MERGE (vog)-[:VOICE]->(:Voice{name:"戦闘_通常攻撃1", message:"せいやっ！", format:"wav", source:"https://some.where.com/hanamura_yousuke/voice/battle_normal_attack1.wav"})
+MERGE (vog)-[:VOICE]->(:Voice{name:"戦闘_ペルソナ召喚１", message:"やるぜぇペルソナ！", format:"wav", source:"https://some.where.com/hanamura_yousuke/voice/battle_summon_persona1.wav"})
+MERGE (vog)-[:VOICE]->(:Voice{name:"戦闘_勝利時１", message:"よしッ行こうぜ", format:"wav", source:"https://some.where.com/hanamura_yousuke/voice/battle_win1.wav"})
+MERGE (vog)-[:VOICE]->(:Voice{name:"戦闘_勝利時２", message:"やるな！　相棒", format:"wav", source:"https://some.where.com/hanamura_yousuke/voice/battle_win2.wav"})
+
+// ゲーム内アイテムを追加
+MERGE (ge)-[:GROUP]->(ig:ItemGroup{name:"アイテム"})
+MERGE (:Item{name:"傷薬",         type:"回復", effect:"味方1体のHPを100回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"軟膏薬",       type:"回復", effect:"味方1体のHPを200回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"ヒールゼリー", type:"回復", effect:"味方1体のHPを400回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"宝玉", type:"回復", effect:"味方1体のHPを全回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"ソウルドロップ", type:"回復", effect:"味方1体のSPを10回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"スナフソウル", type:"回復", effect:"味方1体のSPを50回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"チューインソウル", type:"回復", effect:"味方1体のSPを100回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"ソウルフード", type:"回復", effect:"味方1体のSPを全回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"白桃の実", type:"回復", effect:"味方1体のHPを20回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"魔石", type:"回復", effect:"味方1体のHPを最大HPの30%分回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"お徳用傷薬セット", type:"回復", effect:"味方全体のHPを100回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"緊急医療セット", type:"回復", effect:"味方全体のHPを200回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"マカの葉", type:"回復", effect:"味方全体のHPを400回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"宝玉輪", type:"回復", effect:"味方全体のHPを全回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"ソーマ", type:"回復", effect:"味方全体のHPとSPを全回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"地返しの玉", type:"回復", effect:"味方1体の戦闘不能状態をHP50%で回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"反魂香", type:"回復", effect:"味方1体の戦闘不能状態をHP最大で回復する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"どくだみ茶", type:"回復", effect:"味方1体の毒状態を治療する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"鎮静剤", type:"回復", effect:"味方1体の混乱･恐怖･激昂状態を治療する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"うがい薬", type:"回復", effect:"味方1体の魔封状態を治療する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"ロイヤルゼリー", type:"回復", effect:"味方1体の老化･衰弱状態を治療する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"気付け薬", type:"回復", effect:"味方1体の気絶･ダウン状態を治療する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"ヒランヤ", type:"回復", effect:"味方1体のダウン･死亡以外の状態異常を治療する"})<-[:ITEM]-(ig)
+MERGE (:Item{name:"アムリタソーダ", type:"回復", effect:"味方全体のダウン･死亡以外の状態異常を治療する"})<-[:ITEM]-(ig)
+
+MERGE (ge)-[:GROUP]->(qg:QuestGroup{name:"クエスト"})
+MERGE (qg)-[:QUEST]->(:Quest{no:1, name:"迷走！ナゾナゾ先輩！", reward:"宝箱の鍵", reword_num:3})
+MERGE (qg)-[:QUEST]->(:Quest{no:2, name:"屋上のあの子", reward:"カエレール", reword_num:1})
+MERGE (qg)-[:QUEST]->(:Quest{no:3, name:"幻の酒が欲しい", reward:"お金", reword_num:4000})
+
+// 関連作品を追加
+MERGE (anim_valv:Anime{title:"革命機ヴァルヴレイヴ"})-[:キャラクター]->(char_valv:Category:登場人物{name:"革命機ヴァルヴレイヴ"})
+MERGE (char_valv)-[:登場人物]->(:Character:革命機ヴァルヴレイヴ{name:"七海リオン"}    )<-[:声の出演]-(horie_yui)
+MERGE (char_valv)-[:登場人物]->(:Character:革命機ヴァルヴレイヴ{name:"連坊小路サトミ"})<-[:声の出演]-(namikawa_daisuke)
+MERGE (anim_tora:Anime{title:"とらドラ！"})
+MERGE (anim_tora)-[:キャラクター]->(char_tra:Category:登場人物{name:"登場人物", title:"とらドラ！"})
+MERGE (char_tra)-[:登場人物]->(:Character:`とらドラ！`{name:"櫛枝実乃梨"})<-[:声の出演]-(horie_yui)
+MERGE (char_tra)-[:登場人物]->(:Character:`とらドラ！`{name:"逢坂大河"})<-[:声の出演]-(kugimiya_rie)
+
+// キャラクターのプロパティをアルカナというノードとして独立させ、関連付けを行う
+MATCH (c:Character)
+WHERE c.アルカナ IS NOT NULL
+MERGE (a:アルカナ{name:c.アルカナ})
+MERGE (c)-[:アルカナ]->(a)
+RETURN c, a
+
+// キャラクターから派生しているペルソナを３段階まで辿り、アルカナと関連付けさせる
+MATCH (c:Character)-[*0..3]->(p:ペルソナ),(a:アルカナ{name:c.アルカナ})
+MERGE (p)-[:アルカナ]->(a)
+RETURN c,p,a
+
+// キャラクターからアルカナというプロパティを削除する
+MATCH (c:Character)
+WHERE c.アルカナ IS NOT NULL
+REMOVE c.アルカナ
+
+
+
+
+
+
+
+
+
+
+
+// 一通りのレコードの表示
+MATCH n OPTIONAL MATCH (n)-[r]-(x) return n,r,x
+
+// 全レコードの削除
+MATCH n OPTIONAL MATCH (n)-[r]-() DELETE n,r
+
+
+
+
+
+
+
+// 登場人物と関係する場所だけを表示する
+MATCH (:VideoGame{title:"ペルソナ４"})-[:キャラクター]->()-->(c:Character)-->(l:場所) RETURN c,l
+
+// キャラクターと声優だけを表示する
+MATCH (:VideoGame{title:"ペルソナ４"})-[:キャラクター]->(root)-->(c:Character)<-[:声の出演]-(a:声優) RETURN root,c,a
+
+
+// ゲーム要素を２レベルまで表示
+MATCH (v:VideoGame{title:"ペルソナ４"})-[g:GROUP]->(root)-[*1..2]->(x) RETURN v,g,root,x
+
+
+// ゲームアセットを表示
+MATCH (VideoGame{title:"ペルソナ４"})-[*1..3]->(c)-[g:ASSET_GROUP]->(d)-[*1..4]->(x) RETURN c,g,d,x
+
+

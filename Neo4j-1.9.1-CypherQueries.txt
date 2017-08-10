@@ -1,0 +1,22 @@
+CREATE (ee { name: "Emil", from: "Sweden" }) RETURN ee.name;
+
+START ee=node(*) WHERE ee.name! = "Emil" RETURN ee;
+
+CREATE 
+(ee { name: "Emil", from: "Sweden", klout: 99 }),
+(js { name: "Johan", from: "Sweden", learn: "surfing" }),
+(ir { name: "Ian", from: "England", title: "author" }),
+(rvb { name: "Rik", from: "Belgium", pet: "Orval" }),
+(ally { name: "Allison", from: "California", hobby: "surfing" }),
+(ee)-[:KNOWS {since: 2001}]->(js),(ee)-[:KNOWS {rating: 5}]->(ir),
+(js)-[:KNOWS]->(ir),(js)-[:KNOWS]->(rvb),
+(ir)-[:KNOWS]->(js),(ir)-[:KNOWS]->(ally),
+(rvb)-[:KNOWS]->(ally);
+
+START ee=node(*) MATCH (ee)-[:KNOWS]->(friends) 
+WHERE ee.name! = "Emil" RETURN friends;
+
+START js=node(*) 
+MATCH (js)-[:KNOWS]->()-[:KNOWS]->(surfer) 
+WHERE js.name! = "Johan" AND surfer.hobby! = "surfing"
+RETURN DISTINCT surfer;

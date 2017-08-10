@@ -1,0 +1,188 @@
+CREATE
+(shakespeare { firstname: 'William', lastname: 'Shakespeare'}),
+(juliusCaesar { title: 'Julius Caesar' } ),
+(shakespeare)-[:WROTE_PLAY { year:1599}]->(juliusCaesar),
+(theTempest { title: 'The Tempest'}),
+(shakespeare)-[:WROTE_PLAY {year: 1610}]->(theTempest),
+(rsc{name:'RSC'}),
+(production1 { name: 'Julius Caesar' }),
+(rsc)-[:PRODUCED]->(production1),
+(production1)-[:PRODUCTION_OF]->(juliusCaesar),
+(performance1 { date: 20120729} ),
+(performance1)-[:PERFORMANCE_OF]->(production1),
+(production2 { name: 'The Tempest' }),
+(rsc)-[:PRODUCED]->(production2),
+(production2)-[:PRODUCTION_OF]->(theTempest),
+(performance2 { date: 20061121}),
+(performance2)-[:PERFORMANCE_OF]->(production2),
+(performance3 { date: 20120730}),
+(performance3)-[:PERFORMANCE_OF]->(production1),
+(billy { name: 'Billy' }),
+(review { rating: 5, review: 'This was awesome!'}),
+(billy)-[:WROTE_REVIEW]->(review),
+(review)-[:RATED]->(performance1),
+(theatreRoyal { name: 'Theatre Royal' }),
+(performance1)-[:VENUE]->(theatreRoyal),
+(performance2)-[:VENUE]->(theatreRoyal),
+(performance3)-[:VENUE]->(theatreRoyal),
+(greyStreet { name: 'Grey Street'}),
+(theatreRoyal)-[:STREET]->(greyStreet),
+(newcastle {name: 'Newcastle'}),
+(greyStreet)-[:CITY]->(newcastle),
+(tyneAndWear {name: 'Tyne and Wear'}),
+(newcastle)-[:CONTY]->(tyneAndWear),
+(england {name: 'England'}),
+(tyneAndWear)-[:COUNTRY]->(england),
+(stratford {name: 'Stratford upon Avon'}),
+(stratford)-[:COUNTRY]->(england),
+(rsc)-[:BASED_IN]->(stratford),
+(shakespear)-[:BONE_IN]->(stratford)
+
+
+START 
+	theater=node:venue(name='Theatre Royal'), 
+	newcastle=node:city(name='Newcastle'), 
+	bard=node:author(lastname='Shakespeare')
+MATCH
+	(newcastle)<-[:STREET|CITY*1..2]-(theatre)
+	<-[:VENUE]-()-[:PERFORMANCE_OF]->()-[:PRODUCTION_OF]->
+	(play)<-[:WROTE_PLAY]-(shakespear)
+RETURN DISTINCT play.title AS play
+
+
+
+MATCH
+	(newcastle {name:'Newcastle'})
+		<-[:STREET|CITY*1..2]-
+	(theatre {name:'Theatre Royal'})
+		<-[:VENUE]-()-[:PERFORMANCE_OF]->()-[:PRODUCTION_OF]->(play)
+		<-[:WROTE_PLAY]-(shakespear{lastname:'Shakespeare'})
+RETURN DISTINCT play.title AS play
+
+MATCH
+	(newcastle {name:'Newcastle'})
+		<-[:STREET|CITY*1..2]-
+	(theatre {name:'Theatre Royal'})
+		<-[:VENUE]-()-[:PERFORMANCE_OF]->()-[:PRODUCTION_OF]->(play)
+		<-[w:WROTE_PLAY]-(shakespear{lastname:'Shakespeare'})
+WHERE w.year > 1608
+RETURN play.title AS play, w.year
+
+MATCH
+	(newcastle {name:'Newcastle'})
+		<-[:STREET|CITY*1..2]-
+	(theatre {name:'Theatre Royal'})
+		<-[:VENUE]-()-[p:PERFORMANCE_OF]->()-[:PRODUCTION_OF]->(play)
+		<-[:WROTE_PLAY]-(shakespear{lastname:'Shakespeare'})
+RETURN play.title AS play, count(p) AS performance_count
+ORDER BY performance_count DESC
+
+MATCH (bard{lastname:'Shakespeare'})-[w:WROTE_PLAY]->(play)
+WITH play
+ORDER BY w.year DESC
+RETURN collect(play.title) AS plays
+
+CREATE
+	(alis    { username: 'Alice' }),
+	(bob     { username: 'Bob' }),
+	(charlie { username: 'Charlie' }),
+	(davina  { username: 'Davina' }),
+	(edward  { username: 'Edward' }),
+	(alice)-[:ALIACE_OF]->(bob)
+
+
+CREATE (email_1 {id:'1', content: 'email1'}),
+	(bob  { username: 'Bob' })-[:SENT]->(email_1),
+	(email_1)-[:TO]->(charlie { username: 'Charlie' }),
+	(email_1)-[:CC]->(davina  { username: 'Davina' }),
+	(email_1)-[:CC]->(alice  { username: 'Alice' }),
+	(email_1)-[:BCC]->(edward  { username: 'Edward' })
+
+CREATE (email_2 {id:'2', content: 'email2'}),
+	(bob  { username: 'Bob' })-[:SENT]->(email_2),
+	(email_2)-[:TO]->(davina  { username: 'Davina' }),
+	(email_2)-[:BCC]->(edward  { username: 'Edward' })
+
+
+CREATE (email_3 {id:'3', content: 'email3'}),
+	(davina  { username: 'Davina' })-[:SENT]->(email_3),
+	(email_3)-[:TO]->(bob  { username: 'Bob' }),
+	(email_3)-[:BCC]->(edward  { username: 'Edward' })
+
+CREATE (email_4 {id:'4', content: 'email4'}),
+	(charlie { username: 'Charlie' })-[:SENT]->(email_4),
+	(email_4)-[:TO]->(bob  { username: 'Bob' }),
+	(email_4)-[:TO]->(davina  { username: 'Davina' }),
+	(email_4)-[:TO]->(edward  { username: 'Edward' })
+
+
+CREATE (email_5 {id:'5', content: 'email5'}),
+	(davina  { username: 'Davina' })-[:SENT]->(email_5),
+	(email_5)-[:TO]->(alis    { username: 'Alice' }),
+	(email_5)-[:BCC]->(bob  { username: 'Bob' }),
+	(email_5)-[:BCC]->(edward  { username: 'Edward' })
+
+CREATE (email_6 {id:'6', content: 'email6'}),
+	(bob  { username: 'Bob' })-[:SENT]->(email_6),
+	(email_6)-[:TO]->(charlie { username: 'Charlie' }),
+	(email_6)-[:TO]->(davina  { username: 'Davina' }),
+
+CREATE (reply_1{id:'7', content:'response1'}),
+	(reply_1)-[:REPLY_TO]->(email_6{id:'6'}),
+	(davina  { username: 'Davina' })-[:SENT]->(reply_1),
+	(reply_1)-[:TO]->(bob  { username: 'Bob' }),
+	(reply_1)-[:TO]->(charlie { username: 'Charlie' })
+
+CREATE (reply_2{id:'8', content:'response2'}),
+	(reply_2)-[:REPLY_TO]->(email_6{id:'6'}),
+	(bob  { username: 'Bob' })-[:SENT]->(reply_1),
+	(reply_2)-[:TO]->(davina  { username: 'Davina' }),
+	(reply_2)-[:TO]->(charlie { username: 'Charlie' }),
+	(reply_2)-[:CC]->(alice  { username: 'Alice' })
+
+CREATE (reply_3{id:'9', content:'response3'}),
+	(reply_3)-[:REPLY_TO]->(reply_1{id:'7'}),
+	(charlie { username: 'Charlie' })-[:SENT]->(reply_3),
+	(reply_3)-[:TO]->(bob  { username: 'Bob' }),
+	(reply_3)-[:TO]->(davina  { username: 'Davina' })
+
+CREATE (reply_4{id:'10', content:'response4'}),
+	(reply_4)-[:REPLY_TO]->(reply_3{id:'9'}),
+	(bob  { username: 'Bob' })-[:SENT]->(reply_4),
+	(reply_4)-[:TO]->(charlie { username: 'Charlie' }),
+	(reply_4)-[:TO]->(davina  { username: 'Davina' })
+
+MATCH p=(email{id:'6'})<-[:REPLY_TO*1..4]-()<-[:SEND]-(replier)
+RETURN replier.username AS replier, length(p) - 1 AS depth
+ORDER BY depth
+
+
+MATCH p=(email{id:'6'})<-[:REPLY_TO*1..4]-(mail)
+RETURN mail.id
+
+CREATE
+  (ent1{name:'ent1'}),
+  (ent2{name:'ent2'}),
+  (ent3{name:'ent3'}),
+  (ent4{name:'ent4'}),
+  (ent1)-[:CHAIN_TO]->(ent2),
+  (ent2)-[:CHAIN_TO]->(ent3),
+  (ent3)-[:CHAIN_TO]->(ent4)
+
+MATCH (ent1{name:'ent1'})
+OPTIONAL MATCH (ent1)-->(c)
+RETURN c
+
+CREATE
+	(x1 {name:'x1', desc:'It is x1'}),
+	(x2 {name:'x2', desc:'It is x2'}),
+	(x1)-[:KNOWS]->(x2)
+
+
+CREATE
+	(x3 {name:'x3', desc:'It is x3'}),
+	(x2{name:'x2'})-[:KNOWS]->(x3)
+
+CREATE
+	(x4 {name:'x4', desc:'It is x4'}),
+	(x1{name:'x1'})-[:KNOWS]->(x4)

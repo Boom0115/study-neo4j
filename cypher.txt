@@ -1,0 +1,6 @@
+MERGE (a:Person{name:"Yamada"})
+MERGE (b:Person{name:"Suzuki"})
+MERGE (c:Person{name:"Katou"})
+MERGE (a)-[:KNOWS]->(b)
+MERGE (b)-[:HATE]->(a)
+MERGE (c)-[:LIKE]->(b)
